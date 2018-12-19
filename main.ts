@@ -20,6 +20,11 @@ namespace dtbd {
     //% block
     export function setDriveMode(mode: DriveMode) {
         driveModeBuf.setNumber(NumberFormat.UInt8LE, 3, mode);
+        serial.redirect(
+            SerialPin.P13,
+            SerialPin.P16,
+            BaudRate.BaudRate9600
+        );
         serial.writeBuffer(driveModeBuf);
 
         const resp = serial.readUntil("\r");
