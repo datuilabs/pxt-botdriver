@@ -10,7 +10,7 @@ namespace dtbd {
     function createBuf(len: number, type: number) {
         const buf = pins.createBuffer(len + 3);
         buf.setNumber(NumberFormat.UInt8LE, 0, 0x42);
-        buf.setNumber(NumberFormat.UInt8LE, 1, len);
+        buf.setNumber(NumberFormat.UInt8LE, 1, len+1);
         buf.setNumber(NumberFormat.UInt8LE, 2, type);
         return buf;
     }
