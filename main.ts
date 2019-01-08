@@ -4,13 +4,51 @@ enum DriveMode {
     PerWheel = 2,
 }
 
+enum DriveMotor {
+    M1 = 0,
+    M2 = 1,
+    M3 = 2,
+    M4 = 3
+}
+
+enum DriveDirection{
+    Forward = 1,
+    Backward = 0,
+}
+
+enum ControlAxis {
+    RX = 1,
+    RY = 2,
+    LX = 3,
+    LY = 4,
+}
+
+enum PS2Button {
+    PS2S = 15,
+    PS2X = 14,
+    PS2O = 13,
+    PS2T = 12,
+    PS2R1 = 11,
+    PS2L1 = 10,
+    PS2R2 = 9,
+    PS2L2 = 8,
+    PS2Left = 7,
+    PS2Down = 6,
+    PS2Right = 5,
+    PS2Up = 4,
+    PS2Start = 3,
+    PS2R3 = 2,
+    PS2L3 = 1,
+    PS2Select = 0,
+}
+
 //% color="#ff9800"
 namespace dtbd {
 
     function createBuf(len: number, type: number) {
         const buf = pins.createBuffer(len + 3);
         buf.setNumber(NumberFormat.UInt8LE, 0, 0x42);
-        buf.setNumber(NumberFormat.UInt8LE, 1, len+1);
+        buf.setNumber(NumberFormat.UInt8LE, 1, len + 1);
         buf.setNumber(NumberFormat.UInt8LE, 2, type);
         return buf;
     }
@@ -20,17 +58,79 @@ namespace dtbd {
     //% block
     export function setDriveMode(mode: DriveMode) {
         driveModeBuf.setNumber(NumberFormat.UInt8LE, 3, mode);
-        serial.redirect(
-            SerialPin.P13,
-            SerialPin.P16,
-            BaudRate.BaudRate9600
-        );
+
         serial.writeBuffer(driveModeBuf);
     }
 
+    const driveWeightBuf = createBuf(4, 1);
+
     //% block
-    export function isCommandSuccessful() {
-        const resp = serial.readUntil("\r");
-        return resp == "ok";
+    export function setDriveWeight(axis: ControlAxis, motor: DriveMotor, weight: number) {
+        driveWeightBuf.setNumber(NumberFormat.UInt8LE, 3, axis);
+        driveWeightBuf.setNumber(NumberFormat.UInt8LE, 4, motor);
+        driveWeightBuf.setNumber(NumberFormat.UInt16LE, 5, weight);
+
+        serial.writeBuffer(driveModeBuf);
+    }
+
+    const driveMotorBuf = createBuf(4, 2);
+
+    //% block
+    export function setMotorState(motor: DriveMotor, direction: DriveDirection, force: number){
+        driveMotorBuf.setNumber(NumberFormat.Int8LE, 3, motor);
+        driveMotorBuf.setNumber(NumberFormat.Int8LE, 4, direction);
+        driveWeightBuf.setNumber(NumberFormat.UInt16LE, 5, force);
+
+        serial.writeBuffer(driveMotorBuf);
+    }
+
+    serial.redirect(
+        SerialPin.P13,
+        SerialPin.P16,
+        BaudRate.BaudRate9600
+    );
+
+    const btnOnListeners: (() => void)[][] = [];
+    const btnOffListeners: (() => void)[][] = [];
+    let prevBtnState = 0;
+
+    basic.forever(function () {
+        while (true) {
+            const buf = serial.readUntil("\n");
+            if (buf == "ps2") {
+                const ps2 = serial.readBuffer(2);
+                const btnState = ps2.getNumber(NumberFormat.Int16LE, 0);
+                const diff = btnState ^ prevBtnState;
+                // serial.writeLine("btn state: " + btnState + " diff " + diff + " prev " + prevBtnState);
+
+                for (let i = 0, s = 1; i < 16; i += 1, s = s << 1) {
+                    if ((diff & s) == 0) continue;
+
+                    const cbs = (btnState & s) > 0 ? btnOnListeners[i] : btnOffListeners[i];
+                    if (cbs) {
+                        //serial.writeLine("cbs len " + cbs.length);
+                        for (let j = 0; j < cbs.length; j++) {
+                            cbs[j]();
+                        }
+                    }
+                }
+
+                prevBtnState = btnState;
+            }
+        }
+    });
+
+    //% block="when button %btn is pressed"
+    export function onButtonPressed(btn: PS2Button, callback: () => void) {
+        if (!btnOnListeners[btn]) btnOnListeners[btn] = [];
+        btnOnListeners[btn].push(callback);
+        //serial.writeLine("btn on reg " + btn);
+    }
+
+    //% block="when button %btn is released"
+    export function onButtonReleased(btn: PS2Button, callback: () => void) {
+        if (!btnOffListeners[btn]) btnOffListeners[btn] = [];
+        btnOffListeners[btn].push(callback);
+        //serial.writeLine("btn off reg " + btn);
     }
 }
