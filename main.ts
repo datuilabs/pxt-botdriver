@@ -11,9 +11,10 @@ enum DriveMotor {
     M4 = 3
 }
 
-enum DriveDirection{
+enum DriveDirection {
     Forward = 1,
     Backward = 0,
+    Release = 2
 }
 
 enum ControlAxis {
@@ -24,22 +25,22 @@ enum ControlAxis {
 }
 
 enum PS2Button {
-    PS2S = 15,
-    PS2X = 14,
-    PS2O = 13,
-    PS2T = 12,
-    PS2R1 = 11,
-    PS2L1 = 10,
-    PS2R2 = 9,
-    PS2L2 = 8,
-    PS2Left = 7,
-    PS2Down = 6,
-    PS2Right = 5,
-    PS2Up = 4,
-    PS2Start = 3,
-    PS2R3 = 2,
-    PS2L3 = 1,
-    PS2Select = 0,
+    Square = 15,
+    X = 14,
+    O = 13,
+    Triangle = 12,
+    R1 = 11,
+    L1 = 10,
+    R2 = 9,
+    L2 = 8,
+    Left = 7,
+    Down = 6,
+    Right = 5,
+    Up = 4,
+    Start = 3,
+    R3 = 2,
+    L3 = 1,
+    Select = 0,
 }
 
 //% color="#ff9800"
@@ -76,10 +77,10 @@ namespace dtbd {
     const driveMotorBuf = createBuf(4, 2);
 
     //% block
-    export function setMotorState(motor: DriveMotor, direction: DriveDirection, force: number){
+    export function setMotorState(motor: DriveMotor, direction: DriveDirection, force: number) {
         driveMotorBuf.setNumber(NumberFormat.Int8LE, 3, motor);
         driveMotorBuf.setNumber(NumberFormat.Int8LE, 4, direction);
-        driveWeightBuf.setNumber(NumberFormat.UInt16LE, 5, force);
+        driveMotorBuf.setNumber(NumberFormat.UInt16LE, 5, force);
 
         serial.writeBuffer(driveMotorBuf);
     }
