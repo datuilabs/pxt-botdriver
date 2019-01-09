@@ -77,7 +77,8 @@ namespace dtbd {
     const driveMotorBuf = createBuf(4, 2);
 
     //% block
-    export function setMotorState(motor: DriveMotor, direction: DriveDirection, force: number) {
+    //% force.min=0 force.max=65535
+    export function setMotorState(motor: DriveMotor, direction: DriveDirection, force: number = 0) {
         driveMotorBuf.setNumber(NumberFormat.Int8LE, 3, motor);
         driveMotorBuf.setNumber(NumberFormat.Int8LE, 4, direction);
         driveMotorBuf.setNumber(NumberFormat.UInt16LE, 5, force);
