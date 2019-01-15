@@ -1,0 +1,6 @@
+{
+    "dtbd": "Musclebit",
+    "DriveDirection": "方向",
+    "DriveDirection.Forward": "向前",
+    "dtbd.onButtonPressed|block": "当按钮%btn被按下"
+}
