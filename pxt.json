@@ -9,7 +9,7 @@
     "files": [
         "README.md",
         "main.ts",
-        "_locales/zh/botdriver-strings.json"
+        "_locales/zh/dtbd-strings.json"
     ],
     "testFiles": [
         "test.ts"
