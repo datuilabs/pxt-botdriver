@@ -1,41 +1,77 @@
 enum DriveMode {
+
+    /**
+     * controlled with programming, ignores controller axis input
+     */
+    //% block="Programmic"
     Programmic = 0,
+
+    /**
+     * left stick for driving, right stick for steering.
+     */
+    //% block="Natural"
     Natural = 1,
+
+    /**
+     * left stick for left wheel, right stick for right wheel.
+     */
+    //% block="PerWheel"
     PerWheel = 2,
 }
 
 enum DriveMotor {
+    //% block="Motor M1"
     M1 = 0,
+    //% block="Motor M2"
     M2 = 1,
+    //% block="Motor M3"
     M3 = 2,
+    //% block="Motor M4"
     M4 = 3
 }
 
 enum DriveDirection {
+    //% block="Forward"
     Forward = 1,
+
+    //% block="Backward"
     Backward = 0,
+
+    //% block="Release"
     Release = 2
 }
 
 enum ControlAxis {
-    RX = 1,
-    RY = 2,
+    //% block="Left Stick Left-Right Axis"
     LX = 3,
+    //% block="Left Stick Up-Down Axis"
     LY = 4,
+    //% block="Right Stick Left-Right Axis"
+    RX = 1,
+    //% block="Right Stick Up-Down Axis"
+    RY = 2,
 }
 
 enum PS2Button {
+    //% block="□"
     Square = 15,
+    //% block="X"
     X = 14,
+    //% block="○"
     O = 13,
+    //% block="△"
     Triangle = 12,
     R1 = 11,
     L1 = 10,
     R2 = 9,
     L2 = 8,
+    //% block="Left"
     Left = 7,
+    //% block="Down"
     Down = 6,
+    //% block="Right"
     Right = 5,
+    //% block="Up"
     Up = 4,
     Start = 3,
     R3 = 2,
@@ -56,7 +92,7 @@ namespace dtbd {
 
     const driveModeBuf = createBuf(1, 0);
 
-    //% block
+    //% block="set drive mode to %mode"
     export function setDriveMode(mode: DriveMode) {
         driveModeBuf.setNumber(NumberFormat.UInt8LE, 3, mode);
 
@@ -65,7 +101,8 @@ namespace dtbd {
 
     const driveWeightBuf = createBuf(4, 1);
 
-    //% block
+    //% block="set stick axis %axis weight on %motor to %weight"
+    //% weight.min=-256 weight.max=256
     export function setDriveWeight(axis: ControlAxis, motor: DriveMotor, weight: number) {
         driveWeightBuf.setNumber(NumberFormat.UInt8LE, 3, axis);
         driveWeightBuf.setNumber(NumberFormat.UInt8LE, 4, motor);
@@ -76,7 +113,7 @@ namespace dtbd {
 
     const driveMotorBuf = createBuf(4, 2);
 
-    //% block
+    //% block="drive motor %motor %direction with force %force"
     //% force.min=0 force.max=65535
     export function setMotorState(motor: DriveMotor, direction: DriveDirection, force: number = 0) {
         driveMotorBuf.setNumber(NumberFormat.Int8LE, 3, motor);
