@@ -1,0 +1,5 @@
+{
+  "DriveMode.Natural": "左摇杆控制前后，右摇杆控制左右",
+  "DriveMode.PerWheel": "左摇杆控制左轮，右摇杆控制右轮",
+  "DriveMode.Programmic": "忽略摇杆，由程序控制"
+}

@@ -9,7 +9,8 @@
     "files": [
         "README.md",
         "main.ts",
-        "_locales/zh/dtbd-strings.json"
+        "_locales/zh/pxt-botdriver-strings.json",
+        "_locales/zh/pxt-botdriver-jsdoc-strings.json"
     ],
     "testFiles": [
         "test.ts"
